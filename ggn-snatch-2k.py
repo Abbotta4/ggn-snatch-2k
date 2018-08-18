@@ -13,6 +13,7 @@ except:
 
 BASEURL = config['DEFAULT']['baseurl']
 API_KEY = config['DEFAULT']['api_key']
+START_ID = config['DEFAULT']['start_id']
 END_ID = config['DEFAULT']['end_id']
 
 class db_cursor:
@@ -27,7 +28,7 @@ class db_cursor:
         self.conn.commit()
         self.cursor.close()
 
-for id in range(1, int(END_ID)):
+for id in range(int(START_ID), int(END_ID)):
     time.sleep(2)
     url = BASEURL + 'api.php?request=torrent&id=' + str(id) + '&key=' + API_KEY
     r = requests.get(url)
@@ -35,4 +36,4 @@ for id in range(1, int(END_ID)):
     if r.json()['status'] == 'success':
         j = r.json()['response']['torrent']
         with db_cursor() as cursor:
-            cursor.execute('''INSERT INTO torrents (id, name, size) VALUES (?, ?, ?)''', (id, j['releaseTitle'], j['size']))
+            cursor.execute('''REPLACE INTO torrents (id, name, size) VALUES (?, ?, ?)''', (id, j['releaseTitle'], j['size']))
