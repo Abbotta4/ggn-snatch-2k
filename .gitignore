@@ -1,1 +1,6 @@
 config.ini
+bin/
+config.ini~
+include/
+lib/
+pip-selfcheck.json

@@ -1,19 +1,19 @@
 #!/usr/bin/python3
 
-import requests, json, ConfigParser, sqlite3
+import requests, json, configparser, sqlite3, time
 
 # Load the configuration file
 try:
     with open("config.ini") as f:
-        raw_config = f.read()
-        config = ConfigParser.RawConfigParser(allow_no_value=True)
-        config.readfp(io.BytesIO(raw_config))
+        config = configparser.ConfigParser()
+        config.read('config.ini')
 except:
     print('Could not find a config file.')
+    exit()
 
-BASEURL = config.get('baseurl')
-API_KEY = config.get('api_key')
-END_ID = config.get('end_id')
+BASEURL = config['DEFAULT']['baseurl']
+API_KEY = config['DEFAULT']['api_key']
+END_ID = config['DEFAULT']['end_id']
 
 class db_cursor:
     def __init__(self):
@@ -27,9 +27,12 @@ class db_cursor:
         self.conn.commit()
         self.cursor.close()
 
-for id in range(1, END_ID):
-    url = BASURL + 'api.php?request=torrent&id=' + str(id) + '&key=' + API_KEY
+for id in range(1, int(END_ID)):
+    time.sleep(2)
+    url = BASEURL + 'api.php?request=torrent&id=' + str(id) + '&key=' + API_KEY
     r = requests.get(url)
-    j = r.json()['response']['torrent']
-    with db_cursor() as cursor:
-        cursor.execute('''INSERT INTO torrents (id, name, size) VALUES (?, ?, ?)''', (id, j['releaseTitle'], j['size']))
+    print('id: ' + str(id) + ' ' + r.json()['status'].upper())
+    if r.json()['status'] == 'success':
+        j = r.json()['response']['torrent']
+        with db_cursor() as cursor:
+            cursor.execute('''INSERT INTO torrents (id, name, size) VALUES (?, ?, ?)''', (id, j['releaseTitle'], j['size']))
