@@ -33,6 +33,7 @@ def poll_api(tries, initial_delay, delay, backoff, url):
     for n in range(tries):
         try:
             r = requests.get(url, timeout=1)
+            return r.json()
         except requests.exceptions.Timeout as e:
             polling_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
             print("{0}. Sleeping for {1} seconds.".format(polling_time, delay))
@@ -41,7 +42,6 @@ def poll_api(tries, initial_delay, delay, backoff, url):
         except requests.exceptions.ConnectionError as e:
             polling_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
             print("{1}. Connection dropped with error code {1}".format(polling_time, e.errno))
-        return r.json()
     polling_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
     raise ExceededRetries("{0}. Failed to poll {1} within {2} tries.".format(polling_time, url, tries))
 
