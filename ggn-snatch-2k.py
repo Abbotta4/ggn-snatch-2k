@@ -32,8 +32,8 @@ def poll_api(tries, initial_delay, delay, backoff, url):
     time.sleep(initial_delay)
     for n in range(tries):
         try:
-            r = requests.get(url, timeout=2)
-        except requests.exceptions.Timout as e:
+            r = requests.get(url, timeout=1)
+        except requests.exceptions.Timeout as e:
             polling_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
             print("{0}. Sleeping for {1} seconds.".format(polling_time, delay))
             time.sleep(delay)
@@ -49,7 +49,7 @@ for id in range(int(START_ID), int(END_ID)):
     url = BASEURL + 'api.php?request=torrent&id=' + str(id) + '&key=' + API_KEY
     j = poll_api(10, 2, 1, 2, url)
     polling_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
-    print("{0}. ID {1} {2}".format(polling_time, id, j['status'].upper()))
+    print("{0}. ID {1} {2}".format(polling_time, id, '\033[92mSUCCESS\033[0m' if j['status'] == 'success' else '\033[91mFAILURE\033[0m'))
     if j['status'] == 'success':
         j = j['response']['torrent']
         with db_cursor() as cursor:
