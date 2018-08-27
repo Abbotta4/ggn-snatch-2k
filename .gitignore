@@ -4,4 +4,9 @@ config.ini~
 include/
 lib/
 pip-selfcheck.json
+__pycache__/
 torrents.db
+*.bak
+failed
+*~
+\#*\#

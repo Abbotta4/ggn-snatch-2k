@@ -32,7 +32,7 @@ def poll_api(tries, initial_delay, delay, backoff, url):
     time.sleep(initial_delay)
     for n in range(tries):
         try:
-            r = requests.get(url, timeout=1)
+            r = requests.get(url, timeout=2)
             return r.json()
         except requests.exceptions.Timeout as e:
             polling_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
