@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-import sqlite3, requests, configparser
-from ggn-snatch-2k import db_cursor
+import sqlite3, requests, configparser, time
+from build_database import db_cursor
 
 # Load the configuration file
 try:
@@ -30,6 +30,7 @@ with db_cursor() as cursor:
 
 base_url = 'https://gazellegames.net/torrents.php?action=download'
 for f in tosnatch:
+    time.sleep(0.5) # Add some delay to keep from taking the site down
     url = '{}&id={}&authkey={}&torrent_pass={}'.format(base_url, f[0], AUTHKEY, TORRENT_PASS)
     name = f[1] + '.torrent'
     download_file(url, name)
